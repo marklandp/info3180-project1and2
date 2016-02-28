@@ -1,0 +1,47 @@
+@import "less/mixins.less";
+
+@pink: #be1a8d;
+
+.custom-highlight{
+    background: @pink;
+    color: #fff;
+    text-shadow: -1px 1px 1px darken(@pink, 15%);
+}
+
+/* Apply custom highlight */
+::-moz-selection{ .custom-highlight; }
+::selection { .custom-highlight; }
+
+body {
+    width: 800px;
+}
+
+#name {
+    width: 400px;
+    margin-right: 170px;
+    margin-top:20px;
+    padding-left: 10px;
+   
+}
+
+#time {
+    width: 300px;
+    margin-right: 270px;
+    padding: 20px 20px 0px 40px;
+}
+
+#info {
+    width: 300px;
+    margin-right: 270px;
+    padding: 20px 20px 100px 40px;
+}
+
+
+.coloured {
+    background-color: #83ebfa;
+    border:2px solid black;
+    padding:5px;
+    float: right;
+    font-family: sans-serif;
+    font-size: 18px;
+}
