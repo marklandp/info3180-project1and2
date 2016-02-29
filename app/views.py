@@ -9,13 +9,13 @@ This file creates your application.
 from app import app
 from flask import render_template, request, redirect, url_for
 from app import db
-from app.models import User
+from app.models import User_info
 from flask import jsonify, session
 from datetime import *
 from .forms import NewProfileForm
 import json
 from flask import Response
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 import os
 import time
 
@@ -35,11 +35,6 @@ def about():
     """Render the website's about page."""
     return render_template('about.html')
 
-#@app.route('/profile/')
-#def profile():
-#    """Render personal profile page."""
-#    timeinfo= time.strftime("%a, %b %d %Y")
-#    return render_template('profile.html',current=timeinfo)
 
 def timeinfo():
     return datetime.now()
@@ -49,22 +44,21 @@ def profile():
   """Render the profile page"""
   form = NewProfileForm()
   if form.validate_on_submit():
-    #add user to db
     username = request.form['username']
     email = request.form['email']
     photo = request.files['image']
-    imagename = un + '_' + secure_filename(im.filename)
+    imagename = username + '_' + secure_filename(photo.filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], imagename)
     photo.save(file_path)
     fname = request.form['fname']
     lname = request.form['lname']
     age = int(request.form['age'])
     sex = request.form['sex']
-    newUser = User(username, email, imagename, fname, lname, age, sex, timeinfo())
+    newUser = User_info(username, email, imagename, fname, lname, age, sex, timeinfo())
     db.session.add(newUser)
     db.session.commit()
-    nu = User.query.filter_by(username=username).first()
-    return redirect('/profile/'+str(nu.id))
+    nu = User_info.query.filter_by(username=username).first()
+    return redirect('/profile/'+str(nu.id)) 
   return render_template('form.html', form=form)
 
 

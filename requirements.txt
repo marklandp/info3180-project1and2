@@ -5,6 +5,7 @@ flask
 Flask-SQLAlchemy
 psycopg2
 Flask-WTF
+flask-Migrate
 
 
 # ----------------------
