@@ -78,7 +78,7 @@ def profiles():
   if request.method == "POST":
     lst=[]
     for user in users:
-      lst.append({'id':user.id, 'uname':user.username, 'image':user.image, 'sex':user.sex, 'age':user.age, 'profile_added_on':user.date, 'highscore':user.highscore, 'tdollars':user.tdollars})
+      lst.append({'user_id':user.userid, 'uname':user.username})
     users = {'users': lst}
     return Response(json.dumps(users), mimetype='application/json')
   else:
@@ -90,7 +90,7 @@ def user_profile(userid):
   if usr is not None:
     imgURL = url_for('static', filename='img/'+usr.image)
     if request.method == 'POST':
-      return jsonify(id=usr.userid, uname=usr.username, image=imgURL, sex=usr.sex, age=usr.age, profile_added_on=date, highscore=usr.highscore, tdollars=usr.tdollars)
+      return jsonify(userid=usr.userid, uname=usr.username, image=imgURL, sex=usr.sex, age=usr.age, profile_added_on=usr.datejoined, highscore=usr.highscore, tdollars=usr.tdollars)
     else:
       user = {'id':usr.id, 'userid':usr.userid, 'uname':usr.username, 'image':imgURL, 'age':usr.age, 'fname':usr.fname, 'lname':usr.lname, 'sex':usr.sex, 'highscore':usr.highscore, 'tdollars':usr.tdollars}
       return render_template('user.html', user=user, datestr=date_to_str(usr.datejoined))
