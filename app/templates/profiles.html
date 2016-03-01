@@ -6,7 +6,7 @@
 
 
 {% block main %}
-<div class="page">
+<div class="prof">
   <h1>All Profiles:</h1>
   <hr>
   <table>
@@ -15,7 +15,7 @@
     </tr>
     {% for user in users %}
     <tr>
-      <td>{{ user.id }}</td><td><a href="/profile/{{ user.id }}">{{ user.username}}</a></td>
+      <td>{{ user.userid }}</td><td><a href="/profile/{{ user.id }}">{{ user.username}}</a></td>
     </tr>
   {% endfor %}
   </table>

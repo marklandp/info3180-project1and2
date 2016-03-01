@@ -16,6 +16,7 @@ from .forms import NewProfileForm
 import json
 from flask import Response
 from werkzeug.utils import secure_filename
+from sqlalchemy.sql.expression import func
 import os
 import time
 
@@ -45,21 +46,59 @@ def profile():
   form = NewProfileForm()
   if form.validate_on_submit():
     username = request.form['username']
-    email = request.form['email']
-    photo = request.files['image']
-    imagename = username + '_' + secure_filename(photo.filename)
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], imagename)
-    photo.save(file_path)
     fname = request.form['fname']
     lname = request.form['lname']
     age = int(request.form['age'])
     sex = request.form['sex']
-    newUser = User_info(username, email, imagename, fname, lname, age, sex, timeinfo())
+    photo = request.files['image']
+    # return "works here"
+    imagename = username + '_' + secure_filename(photo.filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], imagename)
+    photo.save(file_path)
+    get_id = db.session.execute('select max(userid) from User_info')
+    base_id = 6200000
+    for ids in get_id:
+      old = ids[0]
+      if old is not None:
+        if old >= base_id:
+          userid = int(old) + 1
+      else:
+        userid = base_id
+    newUser = User_info(username, userid, imagename, fname, lname, age, sex, timeinfo())
     db.session.add(newUser)
     db.session.commit()
     nu = User_info.query.filter_by(username=username).first()
     return redirect('/profile/'+str(nu.id)) 
   return render_template('form.html', form=form)
+  
+  
+@app.route('/profiles/', methods=["GET", "POST"])
+def profiles():
+  users = db.session.query(User_info).all()
+  if request.method == "POST":
+    lst=[]
+    for user in users:
+      lst.append({'id':user.id, 'uname':user.username, 'image':user.image, 'sex':user.sex, 'age':user.age, 'profile_added_on':user.date, 'highscore':user.highscore, 'tdollars':user.tdollars})
+    users = {'users': lst}
+    return Response(json.dumps(users), mimetype='application/json')
+  else:
+    return render_template('profiles.html', users=users)
+    
+@app.route('/profile/<userid>', methods=['POST', 'GET'])
+def user_profile(userid):
+  usr = User_info.query.filter_by(id=userid).first()
+  if usr is not None:
+    imgURL = url_for('static', filename='img/'+usr.image)
+    if request.method == 'POST':
+      return jsonify(id=usr.userid, uname=usr.username, image=imgURL, sex=usr.sex, age=usr.age, profile_added_on=date, highscore=usr.highscore, tdollars=usr.tdollars)
+    else:
+      user = {'id':usr.id, 'userid':usr.userid, 'uname':usr.username, 'image':imgURL, 'age':usr.age, 'fname':usr.fname, 'lname':usr.lname, 'sex':usr.sex, 'highscore':usr.highscore, 'tdollars':usr.tdollars}
+      return render_template('user.html', user=user, datestr=date_to_str(usr.datejoined))
+  else:
+    return render_template('404.html')
+  
+def date_to_str(dt):
+  return dt.strftime("%a, %d %b, %Y")
 
 
 ###

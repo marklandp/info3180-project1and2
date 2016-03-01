@@ -2,7 +2,7 @@ from . import db
 class User_info(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(80), unique=True)
-  email = db.Column(db.String(120), unique=True)
+  userid = db.Column(db.Integer, unique=True)
   image = db.Column(db.String(50))
   fname = db.Column(db.String(40))
   lname = db.Column(db.String(40))
@@ -12,9 +12,9 @@ class User_info(db.Model):
   tdollars = db.Column(db.Integer)
   datejoined = db.Column(db.DateTime)
   
-  def __init__(self, username, email, image, fname, lname, age, sex, date): 
+  def __init__(self, username, userid, image, fname, lname, age, sex, date): 
     self.username = username
-    self.email = email
+    self.userid = userid
     self.image = image
     self.fname = fname
     self.lname = lname
